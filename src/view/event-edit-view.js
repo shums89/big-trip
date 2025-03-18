@@ -1,14 +1,5 @@
 import { createElement } from '../render.js';
-
-const createEventEditTemplate = () =>
-  `
-    <li class="trip-events__item">
-      <form class="event event--edit" action="#" method="post">
-        <header class="event__header"></header>
-        <section class="event__details"></section>
-      </form>
-    </li>
-  `;
+import { createEventEditTemplate } from './event-edit-template.js';
 
 export default class EventEditView {
   getTemplate() {
