@@ -7,16 +7,19 @@ import { render } from '../render.js';
 export default class EventListPresenter {
   eventListComponent = new EventListView();
 
-  constructor({ eventListContainer }) {
+  constructor({ eventListContainer, eventsModel }) {
     this.eventListContainer = eventListContainer;
+    this.eventsModel = eventsModel;
   }
 
   init() {
+    this.eventList = [...this.eventsModel.getEvents()];
+
     render(this.eventListComponent, this.eventListContainer);
     render(new EventEditView(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < 5; i++) {
-      render(new EventView(), this.eventListComponent.getElement());
+    for (let i = 0; i < this.eventList.length; i++) {
+      render(new EventView({ event: this.eventList[i] }), this.eventListComponent.getElement());
     }
   }
 }
