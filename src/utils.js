@@ -30,10 +30,13 @@ const dateDiff = (date1, date2) => {
   return `${days > 0 ? `${days}D ` : ''}${hours}H ${minutes}M`;
 };
 
+const getFirstCapitalLetter = (word) => word ? word.replace(/(?:^.)/g, (a) => a.toUpperCase()) : '';
+
 export {
   getRandomPositiveInteger,
   getRandomArrayElement,
   shuffleArray,
   formatDate,
   dateDiff,
+  getFirstCapitalLetter,
 };

@@ -1,5 +1,5 @@
 const EVENT_COUNT = 10;
-const CITIES = ['Chamonix', 'Geneva', 'Amsterdam', 'Paris', 'London'];
+const CITIES = ['Amsterdam', 'Chamonix', 'Geneva', 'London', 'Paris'];
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const OFFERS_BY_TYPE = [

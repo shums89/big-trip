@@ -16,9 +16,9 @@ export default class EventsPresenter {
     this.events = [...this.eventsModel.getEvents()];
 
     render(this.eventsComponent, this.eventsContainer);
-    render(new EventEditView(), this.eventsComponent.getElement());
+    render(new EventEditView({ event: this.events[0] }), this.eventsComponent.getElement());
 
-    for (let i = 0; i < this.events.length; i++) {
+    for (let i = 1; i < this.events.length; i++) {
       render(new EventView({ event: this.events[i] }), this.eventsComponent.getElement());
     }
   }

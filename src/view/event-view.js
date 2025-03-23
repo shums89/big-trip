@@ -2,23 +2,21 @@ import { OFFERS } from '../const.js';
 import { createElement } from '../render.js';
 import { dateDiff, formatDate } from '../utils.js';
 
+const getOfferList = (offers) => offers
+  .slice()
+  .map((id) =>
+    `
+    <li class="event__offer">
+      <span class="event__offer-title">${OFFERS.filter((el) => el.id === id)[0].title}</span>
+      +€&nbsp;
+      <span class="event__offer-price">${OFFERS.filter((el) => el.id === id)[0].price}</span>
+    </li>
+  `
+  )
+  .join('');
+
 const createEventTemplate = (event) => {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = event;
-  let offerList = '';
-
-  if (offers) {
-    offerList =
-      offers
-        .slice().map((id) => `
-          <li class="event__offer">
-            <span class="event__offer-title">${OFFERS.filter((el) => el.id === id)[0].title}</span>
-            +€&nbsp;
-            <span class="event__offer-price">${OFFERS.filter((el) => el.id === id)[0].price}</span>
-          </li>
-        `)
-        .join('')
-      || '';
-  }
 
   return `
     <li class="trip-events__item">
@@ -40,7 +38,7 @@ const createEventTemplate = (event) => {
           €&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        <ul class="event__selected-offers">${offerList}</ul>
+        <ul class="event__selected-offers">${getOfferList(offers)}</ul>
         <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

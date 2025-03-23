@@ -18,7 +18,7 @@ const generateEvent = (dateFrom, dateTo, city) => {
       .reduce((acc, id) => +acc + +OFFERS.filter((el) => el.id === id)[0].price, basePrice);
   }
 
-  const pictures = [...new Array(getRandomPositiveInteger(0, 10))]
+  const pictures = [...new Array(getRandomPositiveInteger(0, 5))]
     .map(() => {
       const picture = {
         src: `https://loremflickr.com/248/152?r=${Math.random()}`,
