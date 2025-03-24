@@ -11,7 +11,11 @@ const siteFiltersContainer = siteHeaderElement.querySelector('.trip-controls__fi
 const siteEventsContainer = document.querySelector('.trip-events');
 
 const eventsModel = new EventsModel();
-const tripPresenter = new TripPresenter({ tripContainer: siteTripContainer });
+
+const tripPresenter = new TripPresenter({
+  tripContainer: siteTripContainer,
+  eventsModel,
+});
 
 const eventsPresenter = new EventsPresenter({
   eventsContainer: siteEventsContainer,

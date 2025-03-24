@@ -4,14 +4,17 @@ import { render, RenderPosition } from '../render.js';
 
 export default class TripPresenter {
   #tripContainer = null;
+  #eventsModel = null;
+  #events = null;
 
-  #tripComponent = new TripView();
-
-  constructor({ tripContainer }) {
+  constructor({ tripContainer, eventsModel }) {
     this.#tripContainer = tripContainer;
+    this.#eventsModel = eventsModel;
   }
 
   init() {
-    render(this.#tripComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
+    this.#events = [...this.#eventsModel.events];
+
+    render(new TripView({ events: this.#events }), this.#tripContainer, RenderPosition.AFTERBEGIN);
   }
 }
