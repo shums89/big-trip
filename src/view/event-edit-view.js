@@ -2,23 +2,26 @@ import { createElement } from '../render.js';
 import { createEventEditTemplate } from './event-edit-template.js';
 
 export default class EventEditView {
+  #element = null;
+  #event = null;
+
   constructor({ event }) {
-    this.event = event;
+    this.#event = event;
   }
 
-  getTemplate() {
-    return createEventEditTemplate(this.event);
+  get template() {
+    return createEventEditTemplate(this.#event);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -1,9 +1,9 @@
 import { generateEvents } from '../mock/event.js';
 
 export default class EventsModel {
-  events = generateEvents();
+  #events = generateEvents();
 
-  getEvents() {
-    return this.events;
+  get events() {
+    return this.#events;
   }
 }
