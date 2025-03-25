@@ -1,8 +1,7 @@
 import EventEditView from '../view/event-edit-view.js';
 import EventsView from '../view/events-view.js';
 import EventView from '../view/event-view.js';
-
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;

@@ -1,6 +1,5 @@
+import { render, RenderPosition } from '../framework/render.js';
 import TripView from '../view/trip-view.js';
-
-import { render, RenderPosition } from '../render.js';
 
 export default class TripPresenter {
   #tripContainer = null;
