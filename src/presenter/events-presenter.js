@@ -57,6 +57,12 @@ export default class EventsPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
+    eventEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      eventEditComponent.element.reset();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
     eventEditComponent.element.querySelector('.event__reset-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
       eventEditComponent.element.reset();
