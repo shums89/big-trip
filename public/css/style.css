@@ -412,6 +412,7 @@ main {
   .event--edit {
     display: block;
     margin-left: 80px;
+    margin-bottom: 54px;
     padding: 0;
     background-color: #ffffff;
     border-radius: 18px;
