@@ -1,5 +1,5 @@
 import { CITIES, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
-import { formatDate, getFirstCapitalLetter } from '../utils.js';
+import { formatDate, getFirstCapitalLetter } from '../utils/event.js';
 
 const getOfferList = (type, offers) => {
   const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;

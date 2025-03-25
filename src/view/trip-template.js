@@ -1,4 +1,4 @@
-import { formatDate } from '../utils.js';
+import { formatDate } from '../utils/event.js';
 
 const compare = (a, b) => {
   const dateA = new Date(a.dateFrom);

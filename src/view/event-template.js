@@ -1,5 +1,5 @@
 import { OFFERS } from '../const.js';
-import { dateDiff, formatDate } from '../utils.js';
+import { dateDiff, formatDate } from '../utils/event.js';
 
 const getOfferList = (offers) => offers
   .slice()

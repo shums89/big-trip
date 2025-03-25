@@ -1,6 +1,6 @@
-import { getRandomArrayElement, getRandomPositiveInteger, shuffleArray } from '../utils.js';
 import { CITIES, DESCRIPTIONS, EVENT_COUNT, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import dayjs from 'dayjs';
+import { getRandomArrayElement, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
 
 const generateEvent = (dateFrom, dateTo, city) => {
   const type = getRandomArrayElement(EVENT_TYPES);
