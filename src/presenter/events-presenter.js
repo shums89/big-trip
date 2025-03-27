@@ -1,7 +1,6 @@
-import EventEditView from '../view/event-edit-view.js';
 import EventsView from '../view/events-view.js';
-import EventView from '../view/event-view.js';
 import { render } from '../framework/render.js';
+import EventPresenter from './event-presenter.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;
@@ -26,47 +25,7 @@ export default class EventsPresenter {
   }
 
   #renderEvent = (event) => {
-    const eventComponent = new EventView({ event });
-    const eventEditComponent = new EventEditView({ event });
-
-    const replaceCardToForm = () => {
-      this.#eventsComponent.element.replaceChild(eventEditComponent.element, eventComponent.element);
-    };
-
-    const replaceFormToCard = () => {
-      this.#eventsComponent.element.replaceChild(eventComponent.element, eventEditComponent.element);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    eventComponent.setClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    eventEditComponent.setSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    eventEditComponent.setClickHandler(() => {
-      eventEditComponent.element.reset();
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    eventEditComponent.setResetClickHandler(() => {
-      eventEditComponent.element.reset();
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(eventComponent, this.#eventsComponent.element);
+    const eventPresenter = new EventPresenter(this.#eventsComponent.element);
+    eventPresenter.init(event);
   };
 }
