@@ -3,6 +3,7 @@ import TripView from '../view/trip-view.js';
 
 export default class TripPresenter {
   #tripContainer = null;
+  #tripComponent = null;
   #eventsModel = null;
   #events = null;
 
@@ -14,6 +15,14 @@ export default class TripPresenter {
   init() {
     this.#events = [...this.#eventsModel.events];
 
-    render(new TripView({ events: this.#events }), this.#tripContainer, RenderPosition.AFTERBEGIN);
+    this.#tripComponent = new TripView({ events: this.#events });
+
+    this.#renderTrip(this.#events);
   }
+
+  #renderTrip = () => {
+    if (this.#eventsModel.events.length !== 0) {
+      render(this.#tripComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
+    }
+  };
 }
