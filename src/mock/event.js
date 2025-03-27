@@ -1,6 +1,7 @@
 import { CITIES, DESCRIPTIONS, EVENT_COUNT, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import dayjs from 'dayjs';
 import { getRandomArrayElement, getRandomInteger, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 const generateEvent = (dateFrom, dateTo, city) => {
   const type = getRandomArrayElement(EVENT_TYPES);
@@ -35,6 +36,7 @@ const generateEvent = (dateFrom, dateTo, city) => {
   };
 
   const event = {
+    id: nanoid(),
     basePrice,
     dateFrom,
     dateTo,

@@ -6,8 +6,10 @@ export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
   #events = null;
+  #eventPresenters = new Map();
 
   #eventsComponent = new EventsView();
+
 
   constructor({ eventsContainer, eventsModel }) {
     this.#eventsContainer = eventsContainer;
@@ -17,15 +19,25 @@ export default class EventsPresenter {
   init() {
     this.#events = [...this.#eventsModel.events];
 
-    render(this.#eventsComponent, this.#eventsContainer);
+    this.#renderEvents();
+  }
 
-    for (let i = 0; i < this.#events.length; i++) {
-      this.#renderEvent(this.#events[i]);
-    }
+  #clearEvents() {
+    this.#eventPresenters.forEach((presenter) => presenter.destroy());
+    this.#eventPresenters.clear();
   }
 
   #renderEvent = (event) => {
     const eventPresenter = new EventPresenter(this.#eventsComponent.element);
     eventPresenter.init(event);
+    this.#eventPresenters.set(event.id, eventPresenter);
+  };
+
+  #renderEvents = () => {
+    render(this.#eventsComponent, this.#eventsContainer);
+
+    for (let i = 0; i < this.#events.length; i++) {
+      this.#renderEvent(this.#events[i]);
+    }
   };
 }
