@@ -21,8 +21,8 @@ const dateDiff = (date1, date2) => {
 
 const getFirstCapitalLetter = (word) => word ? word.replace(/(?:^.)/g, (a) => a.toUpperCase()) : '';
 
-const isEventFuture = (date) => dayjs().isAfter(date, 'day');
-const isEventPast = (date) => dayjs().isBefore(date, 'day');
+const isEventFuture = (date) => dayjs().isBefore(date, 'day');
+const isEventPast = (date) => dayjs().isAfter(date, 'day');
 
 export {
   formatDate,
