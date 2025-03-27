@@ -1,6 +1,6 @@
 import { CITIES, DESCRIPTIONS, EVENT_COUNT, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import dayjs from 'dayjs';
-import { getRandomArrayElement, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
+import { getRandomArrayElement, getRandomInteger, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
 
 const generateEvent = (dateFrom, dateTo, city) => {
   const type = getRandomArrayElement(EVENT_TYPES);
@@ -51,7 +51,8 @@ const generateEvents = () => {
   let events = [];
   let event = {};
   let dateFrom;
-  let dateTo = dayjs().add(5, 'day');
+  let dateTo = dayjs().add(getRandomInteger(-10, 7), 'day').toDate();
+
   let city = getRandomArrayElement(CITIES);
 
   for (let i = 0; i < EVENT_COUNT; i++) {

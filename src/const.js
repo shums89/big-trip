@@ -40,6 +40,12 @@ const DESCRIPTIONS = [
   'In rutrum ac purus sit amet tempus.'
 ];
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export {
   EVENT_COUNT,
   CITIES,
@@ -47,4 +53,5 @@ export {
   OFFERS,
   OFFERS_BY_TYPE,
   DESCRIPTIONS,
+  FilterType,
 };

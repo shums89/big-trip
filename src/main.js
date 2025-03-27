@@ -1,4 +1,5 @@
 import { render } from './framework/render.js';
+import { generateFilter } from './mock/filter.js';
 import EventsModel from './model/events-model.js';
 import EventsPresenter from './presenter/events-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
@@ -13,6 +14,8 @@ const siteEventsContainer = document.querySelector('.trip-events');
 
 const eventsModel = new EventsModel();
 
+const filters = generateFilter(eventsModel.events);
+
 if (eventsModel.events.length === 0) {
   render(new NoEventView(), siteEventsContainer);
 } else {
@@ -26,7 +29,7 @@ if (eventsModel.events.length === 0) {
     eventsModel,
   });
 
-  render(new FilterView(), siteFiltersContainer);
+  render(new FilterView(filters), siteFiltersContainer);
   render(new SortView(), siteEventsContainer);
 
   tripPresenter.init();
