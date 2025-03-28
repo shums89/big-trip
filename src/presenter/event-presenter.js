@@ -3,13 +3,16 @@ import EventEditView from '../view/event-edit-view.js';
 import EventView from '../view/event-view.js';
 
 export default class EventPresenter {
-  #event = null;
   #eventsContainer = null;
+  #event = null;
+  #handleDataChange = null;
+
   #eventComponent = null;
   #eventEditComponent = null;
 
-  constructor(eventsContainer) {
+  constructor({ eventsContainer, onDataChange }) {
     this.#eventsContainer = eventsContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init(event) {
@@ -18,12 +21,15 @@ export default class EventPresenter {
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 
-    this.#eventComponent = new EventView({ event: this.#event });
+    this.#eventComponent = new EventView({
+      event: this.#event,
+      onEditClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick,
+    });
     this.#eventEditComponent = new EventEditView({ event: this.#event });
 
-    this.#eventComponent.setClickHandler(this.#handleClick);
     this.#eventEditComponent.setSubmitHandler(this.#handleFormSubmit);
-    this.#eventEditComponent.setClickHandler(this.#handleEditClick);
+    this.#eventEditComponent.setClickHandler(this.#handleClick);
     this.#eventEditComponent.setResetClickHandler(this.#handleEditResetClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -52,10 +58,12 @@ export default class EventPresenter {
 
   #replaceCardToForm = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
+    document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
   #replaceFormToCard = () => {
     replace(this.#eventComponent, this.#eventEditComponent);
+    document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
   #onEscKeyDown = (evt) => {
@@ -66,23 +74,23 @@ export default class EventPresenter {
     }
   };
 
-  #handleClick = () => {
+  #handleEditClick = () => {
     this.#replaceCardToForm();
-    document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
   #handleFormSubmit = () => {
     this.#replaceFormToCard();
-    document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #handleEditClick = () => {
+  #handleClick = () => {
     this.#replaceFormToCard();
-    document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
   #handleEditResetClick = () => {
     this.#replaceFormToCard();
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({ ...this.#event, isFavorite: !this.#event.isFavorite });
   };
 }
