@@ -26,11 +26,12 @@ export default class EventPresenter {
       onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
-    this.#eventEditComponent = new EventEditView({ event: this.#event });
-
-    this.#eventEditComponent.setSubmitHandler(this.#handleFormSubmit);
-    this.#eventEditComponent.setClickHandler(this.#handleClick);
-    this.#eventEditComponent.setResetClickHandler(this.#handleEditResetClick);
+    this.#eventEditComponent = new EventEditView({
+      event: this.#event,
+      onFormSubmit: this.#handleFormSubmit,
+      onRollupClick: this.#handleRollupClick,
+      onResetClick: this.#handleResetClick,
+    });
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventComponent, this.#eventsContainer);
@@ -78,15 +79,17 @@ export default class EventPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (event) => {
+    this.#handleDataChange(event);
     this.#replaceFormToCard();
   };
 
-  #handleClick = () => {
+  #handleRollupClick = () => {
     this.#replaceFormToCard();
   };
 
-  #handleEditResetClick = () => {
+  #handleResetClick = (event) => {
+    this.#handleDataChange(event);
     this.#replaceFormToCard();
   };
 

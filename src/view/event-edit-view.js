@@ -13,43 +13,38 @@ const BLANK_EVENT = {
 
 export default class EventEditView extends AbstractView {
   #event = null;
+  #handleFormSubmit = null;
+  #handleRollupClick = null;
+  #handleResetClick = null;
 
-  constructor({ event = BLANK_EVENT }) {
+  constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onResetClick }) {
     super();
     this.#event = event;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupClick = onRollupClick;
+    this.#handleResetClick = onResetClick;
+
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickRollupHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
   }
 
   get template() {
     return createEventEditTemplate(this.#event);
   }
 
-  setSubmitHandler = (callback) => {
-    this._callback.submit = callback;
-    this.element.addEventListener('submit', this.#submitHandler);
-  };
-
-  setClickHandler = (callback) => {
-    this._callback.click = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
-  };
-
-  setResetClickHandler = (callback) => {
-    this._callback.resetClick = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
-  };
-
-  #submitHandler = (evt) => {
+  #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.submit();
+    this.#handleFormSubmit(this.#event);
   };
 
-  #clickHandler = (evt) => {
+  #clickRollupHandler = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this.#handleRollupClick();
   };
 
   #resetClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.resetClick();
+    this.#handleResetClick(this.#event);
   };
 }
