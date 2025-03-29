@@ -46,6 +46,12 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
 export {
   EVENT_COUNT,
   CITIES,
@@ -54,4 +60,5 @@ export {
   OFFERS_BY_TYPE,
   DESCRIPTIONS,
   FilterType,
+  SortType,
 };

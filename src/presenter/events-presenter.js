@@ -4,16 +4,21 @@ import EventPresenter from './event-presenter.js';
 import NoEventView from '../view/no-event-view.js';
 import SortView from '../view/sort-view.js';
 import { updateItem } from '../utils/common.js';
+import { SortType } from '../const.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
-  #events = null;
-  #eventPresenters = new Map();
 
-  #sortComponent = new SortView();
+  #sortComponent = null;
   #eventsComponent = new EventsView();
   #noEventComponent = new NoEventView();
+
+  #events = null;
+  #eventPresenters = new Map();
+  #currentSortType = SortType.DAY;
+  #sourcedEvents = [];
 
   constructor({ eventsContainer, eventsModel }) {
     this.#eventsContainer = eventsContainer;
@@ -22,6 +27,7 @@ export default class EventsPresenter {
 
   init() {
     this.#events = [...this.#eventsModel.events];
+    this.#sourcedEvents = [...this.#eventsModel.events];
 
     this.#renderEventsContainder();
   }
@@ -32,10 +38,42 @@ export default class EventsPresenter {
 
   #handleEventChange = (updatedEvent) => {
     this.#events = updateItem(this.#events, updatedEvent);
+    this.#sourcedEvents = updateItem(this.#sourcedEvents, updatedEvent);
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   };
 
+  #sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#events.sort(sortByTime);
+        break;
+      case SortType.PRICE:
+        this.#events.sort(sortByPrice);
+        break;
+      default:
+        this.#events.sort(sortByDay);
+      // this.#events = [...this.#sourcedEvents];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#currentSortType = sortType;
+    this.#sortEvents(sortType);
+    this.#clearEvents();
+    this.#renderEvents();
+  };
+
   #renderSort = () => {
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortComponent, this.#eventsComponent.element);
   };
 

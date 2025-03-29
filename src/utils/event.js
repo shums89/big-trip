@@ -2,10 +2,15 @@ import dayjs from 'dayjs';
 
 const formatDate = (date, format) => date ? dayjs(date).format(format) : '';
 
-const dateDiff = (date1, date2) => {
-  const startDate = new Date(date1);
-  const endDate = new Date(date2);
-  const duration = Math.abs(endDate - startDate);
+const getDuration = (date1, date2) => {
+  const startDate = dayjs(date1);
+  const endDate = dayjs(date2);
+
+  return endDate.diff(startDate);
+};
+
+const getDurationFormat = (date1, date2) => {
+  const duration = getDuration(date1, date2);
 
   // let seconds = parseInt((duration / 1000) % 60, 10);
   let minutes = parseInt((duration / (1000 * 60)) % 60, 10);
@@ -24,10 +29,17 @@ const getFirstCapitalLetter = (word) => word ? word.replace(/(?:^.)/g, (a) => a.
 const isEventFuture = (date) => dayjs().isBefore(date, 'day');
 const isEventPast = (date) => dayjs().isAfter(date, 'day');
 
+const sortByDay = (eventA, eventB) => dayjs(eventA.dateFrom).diff(dayjs(eventB.dateFrom));
+const sortByTime = (eventA, eventB) => getDuration(eventB.dateFrom, eventB.dateTo) - getDuration(eventA.dateFrom, eventA.dateTo);
+const sortByPrice = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
+
 export {
   formatDate,
-  dateDiff,
+  getDurationFormat,
   getFirstCapitalLetter,
   isEventFuture,
   isEventPast,
+  sortByDay,
+  sortByTime,
+  sortByPrice,
 };

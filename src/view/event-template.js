@@ -1,5 +1,5 @@
 import { OFFERS } from '../const.js';
-import { dateDiff, formatDate } from '../utils/event.js';
+import { getDurationFormat, formatDate } from '../utils/event.js';
 
 const getOfferList = (offers) => offers
   .slice()
@@ -31,7 +31,7 @@ export const createEventTemplate = (event) => {
             —
             <time class="event__end-time" datetime="${dateTo}')}">${formatDate(dateTo, 'HH:mm')}</time>
           </p>
-          <p class="event__duration">${dateDiff(dateFrom, dateTo)}</p>
+          <p class="event__duration">${getDurationFormat(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
           €&nbsp;<span class="event__price-value">${basePrice}</span>
