@@ -1,7 +1,7 @@
 import { CITIES, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import { formatDate, getFirstCapitalLetter } from '../utils/event.js';
 
-const getOfferList = (type, offers) => {
+const createOfferListTemplate = (type, offers) => {
   const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;
 
   if (offersByType.length === 0) {
@@ -41,7 +41,7 @@ const getOfferList = (type, offers) => {
   `;
 };
 
-const getTypeList = () => EVENT_TYPES
+const createTypeListTemplate = () => EVENT_TYPES
   .slice()
   .map((el) =>
     `
@@ -55,7 +55,7 @@ const getTypeList = () => EVENT_TYPES
   )
   .join('');
 
-const getDestination = (destination) => {
+const createDestinationTemplate = (destination) => {
   if (Object.keys(destination).length === 0) {
     return '';
   }
@@ -101,7 +101,7 @@ export const createEventEditTemplate = (event = {}) => {
           <div class='event__type-list'>
             <fieldset class='event__type-group'>
               <legend class='visually-hidden'>Event type</legend>
-              ${getTypeList()}
+              ${createTypeListTemplate()}
             </fieldset>
           </div>
         </div>
@@ -144,8 +144,8 @@ export const createEventEditTemplate = (event = {}) => {
         </button>
       </header>
       <section class='event__details'>
-        ${getOfferList(type, offers)}
-        ${getDestination(destination)}
+        ${createOfferListTemplate(type, offers)}
+        ${createDestinationTemplate(destination)}
       </section>
     </form>
   `;

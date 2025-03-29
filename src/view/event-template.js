@@ -1,7 +1,7 @@
 import { OFFERS } from '../const.js';
 import { getDurationFormat, formatDate } from '../utils/event.js';
 
-const getOfferList = (offers) => offers
+const createOfferListTemplate = (offers) => offers
   .slice()
   .map((id) =>
     `
@@ -37,7 +37,7 @@ export const createEventTemplate = (event) => {
           €&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        <ul class="event__selected-offers">${getOfferList(offers)}</ul>
+        <ul class="event__selected-offers">${createOfferListTemplate(offers)}</ul>
         <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
