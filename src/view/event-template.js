@@ -3,12 +3,12 @@ import { getDurationFormat, formatDate } from '../utils/event.js';
 
 const createOfferListTemplate = (offers) => offers
   .slice()
-  .map((id) =>
+  .map((el) =>
     `
     <li class="event__offer">
-      <span class="event__offer-title">${OFFERS.filter((el) => el.id === id)[0].title}</span>
+      <span class="event__offer-title">${el.title}</span>
       +€&nbsp;
-      <span class="event__offer-price">${OFFERS.filter((el) => el.id === id)[0].price}</span>
+      <span class="event__offer-price">${el.price}</span>
     </li>
   `
   )
@@ -16,6 +16,12 @@ const createOfferListTemplate = (offers) => offers
 
 export const createEventTemplate = (event) => {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = event;
+
+  const filteredOffers = offers
+    .slice()
+    .map((id) => OFFERS.filter((el) => el.id === id)[0]);
+
+  const totalPrice = filteredOffers.reduce((acc, cur) => acc + +cur.price, basePrice);
 
   return `
     <li class="trip-events__item">
@@ -34,10 +40,10 @@ export const createEventTemplate = (event) => {
           <p class="event__duration">${getDurationFormat(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          €&nbsp;<span class="event__price-value">${basePrice}</span>
+          €&nbsp;<span class="event__price-value">${totalPrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        <ul class="event__selected-offers">${createOfferListTemplate(offers)}</ul>
+        <ul class="event__selected-offers">${createOfferListTemplate(filteredOffers)}</ul>
         <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

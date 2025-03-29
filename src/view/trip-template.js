@@ -1,16 +1,8 @@
-import { formatDate } from '../utils/event.js';
-
-const compare = (a, b) => {
-  const dateA = new Date(a.dateFrom);
-  const dateB = new Date(b.dateFrom);
-
-  return dateA - dateB;
-};
+import { formatDate, getTotalEventPrice, sortByDay } from '../utils/event.js';
 
 export const createTripTemplate = (events = []) => {
-  const totalPrice = events.slice().reduce((acc, cur) => acc + cur.basePrice, 0);
-
-  const sortEvents = events.slice().sort(compare);
+  const totalPrice = events.reduce((acc, cur) => acc + +getTotalEventPrice(cur), 0);
+  const sortEvents = events.slice().sort(sortByDay);
 
   const period = (formatDate(sortEvents[0].dateFrom, 'MM.YYYY') === formatDate(sortEvents.at(-1).dateTo, 'MM.YYYY'))
     ? `${formatDate(sortEvents[0].dateFrom, 'MMM DD')}&nbsp;—&nbsp;${formatDate(sortEvents.at(-1).dateTo, 'DD')}`

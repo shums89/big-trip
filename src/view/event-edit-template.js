@@ -25,7 +25,7 @@ const createOfferListTemplate = (type, offers) => {
         <label class='event__offer-label' for='event-offer-${typeFromId}-1'>
           <span class='event__offer-title'>Add ${offer.title}</span>
           +€&nbsp;
-          <span class='event__offer-price'>30</span>
+          <span class='event__offer-price'>${offer.price}</span>
         </label>
       </div>
     `;

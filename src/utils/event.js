@@ -1,4 +1,10 @@
 import dayjs from 'dayjs';
+import { OFFERS } from '../const';
+
+const getTotalEventPrice = (event) => event.offers
+  .slice()
+  .map((id) => OFFERS.filter((el) => el.id === id)[0])
+  .reduce((acc, cur) => acc + +cur.price, event.basePrice);
 
 const formatDate = (date, format) => date ? dayjs(date).format(format) : '';
 
@@ -31,9 +37,10 @@ const isEventPast = (date) => dayjs().isAfter(date, 'day');
 
 const sortByDay = (eventA, eventB) => dayjs(eventA.dateFrom).diff(dayjs(eventB.dateFrom));
 const sortByTime = (eventA, eventB) => getDuration(eventB.dateFrom, eventB.dateTo) - getDuration(eventA.dateFrom, eventA.dateTo);
-const sortByPrice = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
+const sortByPrice = (eventA, eventB) => getTotalEventPrice(eventB) - getTotalEventPrice(eventA);
 
 export {
+  getTotalEventPrice,
   formatDate,
   getDurationFormat,
   getFirstCapitalLetter,

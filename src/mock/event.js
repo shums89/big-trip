@@ -1,4 +1,4 @@
-import { CITIES, DESCRIPTIONS, EVENT_COUNT, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
+import { CITIES, DESCRIPTIONS, EVENT_COUNT, EVENT_TYPES, OFFERS_BY_TYPE } from '../const.js';
 import dayjs from 'dayjs';
 import { getRandomArrayElement, getRandomInteger, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
 import { nanoid } from 'nanoid';
@@ -6,18 +6,12 @@ import { nanoid } from 'nanoid';
 const generateEvent = (dateFrom, dateTo, city) => {
   const type = getRandomArrayElement(EVENT_TYPES);
   const offersByType = OFFERS_BY_TYPE.filter((el) => el.type === type)[0].offers;
-  let offers = [];
-  let basePrice = getRandomPositiveInteger(1, 10) * 10;
 
-  if (Math.round(Math.random())) {
-    offers = shuffleArray(offersByType).slice(-getRandomPositiveInteger(0, offersByType.length - 1));
-  }
-
-  if (offers) {
-    basePrice = offers
-      .slice()
-      .reduce((acc, id) => +acc + +OFFERS.filter((el) => el.id === id)[0].price, basePrice);
-  }
+  const offers = (Math.round(Math.random()))
+    ? shuffleArray(offersByType)
+      .slice(-getRandomPositiveInteger(0, offersByType.length - 1))
+      .sort((a, b) => a - b)
+    : [];
 
   const pictures = [...new Array(getRandomPositiveInteger(0, 5))]
     .map(() => {
@@ -37,7 +31,7 @@ const generateEvent = (dateFrom, dateTo, city) => {
 
   const event = {
     id: nanoid(),
-    basePrice,
+    basePrice: getRandomPositiveInteger(1, 10) * 10,
     dateFrom,
     dateTo,
     destination,
