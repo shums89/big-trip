@@ -20,6 +20,7 @@ const createOfferListTemplate = (type, offers) => {
           class='event__offer-checkbox visually-hidden'
           id='event-offer-${typeFromId}-1' type='checkbox'
           name='event-offer-${typeFromId}'
+          data-event-offer-id=${offer.id}
           ${(offers?.some((el) => el === offer.id)) ? 'checked' : ''}
         >
         <label class='event__offer-label' for='event-offer-${typeFromId}-1'>

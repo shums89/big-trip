@@ -3,9 +3,33 @@ import dayjs from 'dayjs';
 import { getRandomArrayElement, getRandomInteger, getRandomPositiveInteger, shuffleArray } from '../utils/common.js';
 import { nanoid } from 'nanoid';
 
+const generatePictures = (count) => [...new Array(count)]
+  .map(() => {
+    const picture = {
+      src: `https://loremflickr.com/248/152?r=${Math.random()}`,
+      description: '',
+    };
+
+    return picture;
+  });
+
+const generateDestination = (city) => {
+  const destination = {};
+
+  destination.description = shuffleArray(DESCRIPTIONS).slice(-getRandomPositiveInteger(1, 5)).join(' ');
+  destination.name = city;
+  destination.pictures = generatePictures(CITIES.indexOf(city) + 1);
+
+  return destination;
+};
+
 const generateEvent = (dateFrom, dateTo, city) => {
   const type = getRandomArrayElement(EVENT_TYPES);
   const offersByType = OFFERS_BY_TYPE.filter((el) => el.type === type)[0].offers;
+
+  city = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight'].some((el) => el === type)
+    ? getRandomArrayElement(CITIES)
+    : city;
 
   const offers = (Math.round(Math.random()))
     ? shuffleArray(offersByType)
@@ -13,28 +37,12 @@ const generateEvent = (dateFrom, dateTo, city) => {
       .sort((a, b) => a - b)
     : [];
 
-  const pictures = [...new Array(getRandomPositiveInteger(0, 5))]
-    .map(() => {
-      const picture = {
-        src: `https://loremflickr.com/248/152?r=${Math.random()}`,
-        description: '',
-      };
-
-      return picture;
-    });
-
-  const destination = {
-    description: shuffleArray(DESCRIPTIONS).slice(-getRandomPositiveInteger(1, 5)).join(' '),
-    name: ['taxi', 'bus', 'train', 'ship', 'drive', 'flight'].some((el) => el === type) ? getRandomArrayElement(CITIES) : city,
-    pictures,
-  };
-
   const event = {
     id: nanoid(),
     basePrice: getRandomPositiveInteger(1, 10) * 10,
     dateFrom,
     dateTo,
-    destination,
+    destination: generateDestination(city),
     isFavorite: Boolean(Math.round(Math.random())),
     offers,
     type,
@@ -65,5 +73,6 @@ const generateEvents = () => {
 };
 
 export {
+  generateDestination,
   generateEvents,
 };

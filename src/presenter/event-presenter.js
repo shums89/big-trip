@@ -52,6 +52,7 @@ export default class EventPresenter {
 
     if (this.#mode === Mode.EDITING) {
       replace(this.#eventEditComponent, prevEventEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -65,28 +66,29 @@ export default class EventPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToCard();
     }
   }
 
   #replaceCardToForm = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
-    document.addEventListener('keydown', this.#onEscKeyDown);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   };
 
   #replaceFormToCard = () => {
     replace(this.#eventComponent, this.#eventEditComponent);
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   };
 
-  #onEscKeyDown = (evt) => {
+  #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToCard();
-      document.removeEventListener('keydown', this.#onEscKeyDown);
     }
   };
 
@@ -100,11 +102,12 @@ export default class EventPresenter {
   };
 
   #handleRollupClick = () => {
+    this.#eventEditComponent.reset(this.#event);
     this.#replaceFormToCard();
   };
 
-  #handleResetClick = (event) => {
-    this.#handleDataChange(event);
+  #handleResetClick = () => {
+    this.#eventEditComponent.reset(this.#event);
     this.#replaceFormToCard();
   };
 
