@@ -2,6 +2,9 @@ import { EVENT_TYPES } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { generateDestination } from '../mock/event.js';
 import { createEventEditTemplate } from './event-edit-template.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_EVENT = {
   basePrice: '',
@@ -16,6 +19,7 @@ export default class EventEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupClick = null;
   #handleResetClick = null;
+  #datepicker = null;
 
   constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onResetClick }) {
     super();
@@ -29,6 +33,17 @@ export default class EventEditView extends AbstractStatefulView {
 
   get template() {
     return createEventEditTemplate(this._state);
+  }
+
+  // Перегружаем метод родителя removeElement,
+  // чтобы при удалении удалялся более не нужный календарь
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
   }
 
   reset(event) {
@@ -45,6 +60,8 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offersChangeHandler);
     this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+
+    this.#setDatepicker();
   };
 
   #formSubmitHandler = (evt) => {
@@ -105,6 +122,51 @@ export default class EventEditView extends AbstractStatefulView {
       basePrice: +target.value,
     });
   };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #setDatepicker() {
+    const optional = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      time_24hr: true,
+      minuteIncrement: 1,
+    };
+
+    const dateFromElement = this.element.querySelector('input[id="event-start-time-1"]');
+    const dateToElement = this.element.querySelector('input[id="event-end-time-1"]');
+
+    this.#datepicker = flatpickr(
+      dateFromElement,
+      {
+        ...optional,
+        defaultDate: new Date(this._state.dateFrom),
+        defaultHour: new Date(this._state.dateFrom).getHours(),
+        defaultMinute: new Date(this._state.dateFrom).getMinutes(),
+        onClose: this.#dateFromChangeHandler,
+      },
+    );
+    this.#datepicker = flatpickr(
+      dateToElement,
+      {
+        ...optional,
+        defaultDate: new Date(this._state.dateTo),
+        defaultHour: new Date(this._state.dateTo).getHours(),
+        defaultMinute: new Date(this._state.dateTo).getMinutes(),
+        onClose: this.#dateToChangeHandler,
+      },
+    );
+  }
 
   static convertEventToState(event) {
     return {

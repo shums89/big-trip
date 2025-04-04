@@ -90,6 +90,8 @@ export const createEventEditTemplate = (event = {}) => {
 
   const cityList = CITIES.slice().map((el) => `<option value='${el}'></option>`).join('');
 
+  const isSubmitDisabled = (dateFrom && dateTo && dateTo >= dateFrom);
+
   return `
     <form class='event event--edit' action='#' method='post'>
       <header class='event__header'>
@@ -138,7 +140,7 @@ export const createEventEditTemplate = (event = {}) => {
           >
         </div>
 
-        <button class='event__save-btn btn btn--blue' type='submit'>Save</button>
+        <button class='event__save-btn btn btn--blue' type='submit' ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
         <button class='event__reset-btn' type='reset'>Cancel</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
