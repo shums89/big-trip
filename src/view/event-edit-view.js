@@ -19,7 +19,8 @@ export default class EventEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupClick = null;
   #handleDeleteClick = null;
-  #datepicker = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onDeleteClick }) {
     super();
@@ -40,9 +41,14 @@ export default class EventEditView extends AbstractStatefulView {
   removeElement() {
     super.removeElement();
 
-    if (this.#datepicker) {
-      this.#datepicker.destroy();
-      this.#datepicker = null;
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
     }
   }
 
@@ -129,6 +135,9 @@ export default class EventEditView extends AbstractStatefulView {
   };
 
   #setDatepicker = () => {
+    const dateFromElement = this.element.querySelector('input[id="event-start-time-1"]');
+    const dateToElement = this.element.querySelector('input[id="event-end-time-1"]');
+
     const optional = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
@@ -136,10 +145,7 @@ export default class EventEditView extends AbstractStatefulView {
       minuteIncrement: 1,
     };
 
-    const dateFromElement = this.element.querySelector('input[id="event-start-time-1"]');
-    const dateToElement = this.element.querySelector('input[id="event-end-time-1"]');
-
-    this.#datepicker = flatpickr(
+    this.#datepickerFrom = flatpickr(
       dateFromElement,
       {
         ...optional,
@@ -149,7 +155,8 @@ export default class EventEditView extends AbstractStatefulView {
         onClose: this.#dateFromChangeHandler,
       },
     );
-    this.#datepicker = flatpickr(
+
+    this.#datepickerTo = flatpickr(
       dateToElement,
       {
         ...optional,
