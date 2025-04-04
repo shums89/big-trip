@@ -18,15 +18,15 @@ const BLANK_EVENT = {
 export default class EventEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupClick = null;
-  #handleResetClick = null;
+  #handleDeleteClick = null;
   #datepicker = null;
 
-  constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onResetClick }) {
+  constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onDeleteClick }) {
     super();
     this._setState(EventEditView.convertEventToState(event));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
-    this.#handleResetClick = onResetClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -55,7 +55,7 @@ export default class EventEditView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.element.addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offersChangeHandler);
     this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#destinationChangeHandler);
@@ -72,13 +72,6 @@ export default class EventEditView extends AbstractStatefulView {
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupClick();
-  };
-
-  #resetClickHandler = (event) => {
-    this.updateElement(
-      EventEditView.convertEventToState(event),
-    );
-    this.#handleResetClick();
   };
 
   #typeChangeHandler = ({ target }) => {
@@ -135,7 +128,7 @@ export default class EventEditView extends AbstractStatefulView {
     });
   };
 
-  #setDatepicker() {
+  #setDatepicker = () => {
     const optional = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
@@ -166,7 +159,12 @@ export default class EventEditView extends AbstractStatefulView {
         onClose: this.#dateToChangeHandler,
       },
     );
-  }
+  };
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EventEditView.convertStateToEvent(this._state));
+  };
 
   static convertEventToState(event) {
     return {

@@ -21,8 +21,9 @@ const getDurationFormat = (date1, date2) => {
   // let seconds = parseInt((duration / 1000) % 60, 10);
   let minutes = parseInt((duration / (1000 * 60)) % 60, 10);
   let hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10);
-  const days = parseInt(duration / (1000 * 60 * 60 * 24), 10);
+  let days = parseInt(duration / (1000 * 60 * 60 * 24), 10);
 
+  days = (days < 10) ? `0${days}` : days;
   hours = (hours < 10) ? `0${hours}` : hours;
   minutes = (minutes < 10) ? `0${minutes}` : minutes;
   // seconds = (seconds < 10) ? `0${seconds}` : seconds;
@@ -39,6 +40,8 @@ const sortByDay = (eventA, eventB) => dayjs(eventA.dateFrom).diff(dayjs(eventB.d
 const sortByTime = (eventA, eventB) => getDuration(eventB.dateFrom, eventB.dateTo) - getDuration(eventA.dateFrom, eventA.dateTo);
 const sortByPrice = (eventA, eventB) => getTotalEventPrice(eventB) - getTotalEventPrice(eventA);
 
+const isEqual = (array1, array2) => JSON.stringify(array1) === JSON.stringify(array2);
+
 export {
   getTotalEventPrice,
   formatDate,
@@ -49,4 +52,5 @@ export {
   sortByDay,
   sortByTime,
   sortByPrice,
+  isEqual,
 };

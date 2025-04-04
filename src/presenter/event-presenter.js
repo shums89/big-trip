@@ -1,4 +1,6 @@
+import { UpdateType, UserAction } from '../const.js';
 import { remove, render, replace } from '../framework/render.js';
+import { isEqual } from '../utils/event.js';
 import EventEditView from '../view/event-edit-view.js';
 import EventView from '../view/event-view.js';
 
@@ -34,11 +36,12 @@ export default class EventPresenter {
       onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
+
     this.#eventEditComponent = new EventEditView({
       event: this.#event,
       onFormSubmit: this.#handleFormSubmit,
       onRollupClick: this.#handleRollupClick,
-      onResetClick: this.#handleResetClick,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -96,8 +99,14 @@ export default class EventPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = (event) => {
-    this.#handleDataChange(event);
+  #handleFormSubmit = (update) => {
+    const isPatchUpdate = isEqual(this.#event.offers, update.offers) || this.#event.type !== update.type;
+
+    this.#handleDataChange(
+      UserAction.UPDATE_EVENT,
+      isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR,
+      update,
+    );
     this.#replaceFormToCard();
   };
 
@@ -106,12 +115,19 @@ export default class EventPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleResetClick = () => {
-    this.#eventEditComponent.reset(this.#event);
-    this.#replaceFormToCard();
+  #handleDeleteClick = (event) => {
+    this.#handleDataChange(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({ ...this.#event, isFavorite: !this.#event.isFavorite });
+    this.#handleDataChange(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      { ...this.#event, isFavorite: !this.#event.isFavorite },
+    );
   };
 }

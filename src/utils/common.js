@@ -1,6 +1,5 @@
 const getRandomArrayElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
-const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 const getRandomPositiveInteger = (a, b) => {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
@@ -24,5 +23,4 @@ export {
   getRandomInteger,
   getRandomArrayElement,
   shuffleArray,
-  updateItem,
 };
