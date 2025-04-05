@@ -5,10 +5,12 @@ import NoEventView from '../view/no-event-view.js';
 import SortView from '../view/sort-view.js';
 import { SortType, UpdateType, UserAction } from '../const.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
+import { filter } from '../utils/filter.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
+  #filterModel = null;
 
   #sortComponent = null;
   #eventsComponent = new EventsView();
@@ -17,24 +19,30 @@ export default class EventsPresenter {
   #eventPresenters = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor({ eventsContainer, eventsModel }) {
+  constructor({ eventsContainer, eventsModel, filterModel }) {
     this.#eventsContainer = eventsContainer;
     this.#eventsModel = eventsModel;
+    this.#filterModel = filterModel;
 
     this.#eventsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get events() {
+    const filterType = this.#filterModel.filter;
+    const events = this.#eventsModel.events;
+    const filteredEvents = filter[filterType](events);
+
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return [...this.#eventsModel.events].sort(sortByDay);
+        return filteredEvents.sort(sortByDay);
       case SortType.TIME:
-        return [...this.#eventsModel.events].sort(sortByTime);
+        return filteredEvents.sort(sortByTime);
       case SortType.PRICE:
-        return [...this.#eventsModel.events].sort(sortByPrice);
+        return filteredEvents.sort(sortByPrice);
     }
 
-    return this.#eventsModel.events;
+    return filteredEvents;
   }
 
   init() {
@@ -46,8 +54,6 @@ export default class EventsPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
-
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
@@ -66,8 +72,6 @@ export default class EventsPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
