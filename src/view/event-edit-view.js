@@ -1,3 +1,4 @@
+import { CITIES } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { generateDestination } from '../mock/event.js';
 import { checkEquality } from '../utils/event.js';
@@ -67,6 +68,7 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offersChangeHandler);
     this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
 
     this.#setDatepicker();
@@ -107,15 +109,25 @@ export default class EventEditView extends AbstractStatefulView {
   };
 
   #destinationChangeHandler = ({ target }) => {
-    let destination = {};
+    let destination = this._state.destination;
 
-    if (target.value && target.value !== destination.name) {
-      destination = generateDestination(target.value);
+    if (
+      target.value &&
+      target.value.toLowerCase() !== destination.name.toLowerCase() &&
+      CITIES.some((el) => el.toLowerCase() === target.value.toLowerCase())
+    ) {
+      const city = CITIES.filter((el) => el.toLowerCase() === target.value.toLowerCase())[0];
+
+      destination = generateDestination(city);
 
       this.updateElement({
         destination,
       });
     }
+  };
+
+  #priceInputHandler = ({ target }) => {
+    target.value = target.value.replace(/\D+/g, '');
   };
 
   #priceChangeHandler = ({ target }) => {
