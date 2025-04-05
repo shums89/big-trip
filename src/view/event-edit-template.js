@@ -1,5 +1,5 @@
 import { CITIES, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
-import { formatDate, getFirstCapitalLetter } from '../utils/event.js';
+import { formatDate, getDuration, getFirstCapitalLetter } from '../utils/event.js';
 
 const createOfferListTemplate = (type, offers) => {
   const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;
@@ -90,7 +90,7 @@ export const createEventEditTemplate = (event = {}) => {
 
   const cityList = CITIES.slice().map((el) => `<option value='${el}'></option>`).join('');
 
-  const isSubmitDisabled = (dateFrom && dateTo && dateTo >= dateFrom);
+  const isSubmitDisabled = (dateFrom && dateTo && getDuration(dateFrom, dateTo) > 0);
 
   return `
     <form class='event event--edit' action='#' method='post'>

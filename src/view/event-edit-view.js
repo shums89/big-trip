@@ -130,7 +130,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   #dateToChangeHandler = ([userDate]) => {
     this.updateElement({
-      dateFrom: userDate,
+      dateTo: userDate,
     });
   };
 

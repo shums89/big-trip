@@ -12,23 +12,21 @@ const getDuration = (date1, date2) => {
   const startDate = dayjs(date1);
   const endDate = dayjs(date2);
 
-  return endDate.diff(startDate);
+  return endDate.diff(startDate, 'minute');
 };
 
 const getDurationFormat = (date1, date2) => {
   const duration = getDuration(date1, date2);
 
-  // let seconds = parseInt((duration / 1000) % 60, 10);
-  let minutes = parseInt((duration / (1000 * 60)) % 60, 10);
-  let hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10);
-  let days = parseInt(duration / (1000 * 60 * 60 * 24), 10);
+  let minutes = parseInt(duration % 60, 10);
+  let hours = parseInt((duration / 60) % 24, 10);
+  let days = parseInt(duration / (60 * 24), 10);
 
-  days = (days < 10) ? `0${days}` : days;
-  hours = (hours < 10) ? `0${hours}` : hours;
-  minutes = (minutes < 10) ? `0${minutes}` : minutes;
-  // seconds = (seconds < 10) ? `0${seconds}` : seconds;
+  days = (days > 0) ? `0${days}D`.slice(-3) : '';
+  hours = (hours > 0) ? `0${hours}H`.slice(-3) : '';
+  minutes = (minutes > 0) ? `0${minutes}M`.slice(-3) : '';
 
-  return `${days > 0 ? `${days}D ` : ''}${hours}H ${minutes}M`;
+  return `${days} ${hours} ${minutes}`;
 };
 
 const getFirstCapitalLetter = (word) => word ? word.replace(/(?:^.)/g, (a) => a.toUpperCase()) : '';
@@ -45,6 +43,7 @@ const isEqual = (array1, array2) => JSON.stringify(array1) === JSON.stringify(ar
 export {
   getTotalEventPrice,
   formatDate,
+  getDuration,
   getDurationFormat,
   getFirstCapitalLetter,
   isEventFuture,
