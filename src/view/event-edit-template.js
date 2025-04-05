@@ -2,11 +2,11 @@ import { CITIES, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import { formatDate, getDuration, getFirstCapitalLetter } from '../utils/event.js';
 
 const createOfferListTemplate = (type, offers) => {
-  const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;
-
-  if (offersByType.length === 0) {
+  if (!type) {
     return '';
   }
+
+  const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;
 
   const offerList = OFFERS
     .slice()
@@ -78,19 +78,13 @@ const createDestinationTemplate = (destination) => {
   `;
 };
 
-export const createEventEditTemplate = (event = {}) => {
-  const {
-    basePrice = '',
-    dateFrom = new Date(),
-    dateTo = new Date(),
-    destination = {},
-    offers = null,
-    type = EVENT_TYPES[0],
-  } = event;
+export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destination, offers, type }, isNewEvent) => {
+  const cityList = CITIES
+    .slice()
+    .map((el) => `<option value='${el}'></option>`)
+    .join('');
 
-  const cityList = CITIES.slice().map((el) => `<option value='${el}'></option>`).join('');
-
-  const isSubmitDisabled = (dateFrom && dateTo && getDuration(dateFrom, dateTo) > 0);
+  const isSubmitDisabled = (dateFrom && dateTo && getDuration(dateFrom, dateTo) > 0) && basePrice;
 
   return `
     <form class='event event--edit' action='#' method='post'>
@@ -141,10 +135,8 @@ export const createEventEditTemplate = (event = {}) => {
         </div>
 
         <button class='event__save-btn btn btn--blue' type='submit' ${isSubmitDisabled ? '' : 'disabled'}>Save</button>
-        <button class='event__reset-btn' type='reset'>Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class='event__reset-btn' type='reset'>${isNewEvent ? 'Cancel' : 'Delete'}</button>
+        ${!isNewEvent ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
       </header>
       <section class='event__details'>
         ${createOfferListTemplate(type, offers)}

@@ -1,6 +1,6 @@
 import { UpdateType, UserAction } from '../const.js';
 import { remove, render, replace } from '../framework/render.js';
-import { isEqual } from '../utils/event.js';
+import { checkEquality } from '../utils/event.js';
 import EventEditView from '../view/event-edit-view.js';
 import EventView from '../view/event-view.js';
 
@@ -100,7 +100,10 @@ export default class EventPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isPatchUpdate = isEqual(this.#event.offers, update.offers) || this.#event.type !== update.type;
+    const isPatchUpdate =
+      checkEquality(this.#event.offers, update.offers) ||
+      this.#event.type !== update.type ||
+      this.#event.basePrice !== update.basePrice;
 
     this.#handleDataChange(
       UserAction.UPDATE_EVENT,

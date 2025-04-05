@@ -1,6 +1,6 @@
-import { EVENT_TYPES } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { generateDestination } from '../mock/event.js';
+import { checkEquality } from '../utils/event.js';
 import { createEventEditTemplate } from './event-edit-template.js';
 import flatpickr from 'flatpickr';
 
@@ -11,8 +11,8 @@ const BLANK_EVENT = {
   dateFrom: new Date(),
   dateTo: new Date(),
   destination: {},
-  offers: null,
-  type: EVENT_TYPES[0],
+  offers: [],
+  type: '',
 };
 
 export default class EventEditView extends AbstractStatefulView {
@@ -21,6 +21,7 @@ export default class EventEditView extends AbstractStatefulView {
   #handleDeleteClick = null;
   #datepickerFrom = null;
   #datepickerTo = null;
+  #isNewEvent = null;
 
   constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onDeleteClick }) {
     super();
@@ -28,12 +29,13 @@ export default class EventEditView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
     this.#handleDeleteClick = onDeleteClick;
+    this.#isNewEvent = checkEquality(event, BLANK_EVENT);
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEventEditTemplate(this._state);
+    return createEventEditTemplate(this._state, this.#isNewEvent);
   }
 
   // Перегружаем метод родителя removeElement,
@@ -60,7 +62,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.element.addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offersChangeHandler);
@@ -117,7 +119,7 @@ export default class EventEditView extends AbstractStatefulView {
   };
 
   #priceChangeHandler = ({ target }) => {
-    this._setState({
+    this.updateElement({
       basePrice: +target.value,
     });
   };

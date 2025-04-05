@@ -38,7 +38,7 @@ const sortByDay = (eventA, eventB) => dayjs(eventA.dateFrom).diff(dayjs(eventB.d
 const sortByTime = (eventA, eventB) => getDuration(eventB.dateFrom, eventB.dateTo) - getDuration(eventA.dateFrom, eventA.dateTo);
 const sortByPrice = (eventA, eventB) => getTotalEventPrice(eventB) - getTotalEventPrice(eventA);
 
-const isEqual = (array1, array2) => JSON.stringify(array1) === JSON.stringify(array2);
+const checkEquality = (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2);
 
 export {
   getTotalEventPrice,
@@ -51,5 +51,5 @@ export {
   sortByDay,
   sortByTime,
   sortByPrice,
-  isEqual,
+  checkEquality,
 };
