@@ -3,7 +3,7 @@ import { remove, render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import NoEventView from '../view/no-event-view.js';
 import SortView from '../view/sort-view.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 import { filter } from '../utils/filter.js';
 
@@ -14,10 +14,11 @@ export default class EventsPresenter {
 
   #sortComponent = null;
   #eventsComponent = new EventsView();
-  #noEventComponent = new NoEventView();
+  #noEventComponent = null;
 
   #eventPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({ eventsContainer, eventsModel, filterModel }) {
     this.#eventsContainer = eventsContainer;
@@ -29,9 +30,9 @@ export default class EventsPresenter {
   }
 
   get events() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const events = this.#eventsModel.events;
-    const filteredEvents = filter[filterType](events);
+    const filteredEvents = filter[this.#filterType](events);
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -118,6 +119,10 @@ export default class EventsPresenter {
   };
 
   #renderNoEvents = () => {
+    this.#noEventComponent = new NoEventView({
+      filterType: this.#filterType,
+    });
+
     render(this.#noEventComponent, this.#eventsComponent.element);
   };
 
@@ -126,7 +131,10 @@ export default class EventsPresenter {
     this.#eventPresenters.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noEventComponent);
+
+    if (this.#noEventComponent) {
+      remove(this.#noEventComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
