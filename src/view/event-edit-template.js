@@ -78,13 +78,31 @@ const createDestinationTemplate = (destination) => {
   `;
 };
 
-export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destination, offers, type }, isNewEvent) => {
+const createButtonReset = (isNewEvent, isDisabled, isDeleting) => {
+  if (isNewEvent) {
+    return `<button class='event__reset-btn' type='reset' ${isDisabled ? 'disabled' : ''}>Cancel</button>`;
+  } else {
+    return `
+      <button class='event__reset-btn' type='reset' ${isDisabled ? 'disabled' : ''}>
+        ${isDeleting ? 'Deleting...' : 'Delete'}
+      </button>
+    `;
+  }
+};
+
+const createButtonRollup = (isDisabled) => `
+    <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+      <span class="visually-hidden">Open event</span>
+    </button>
+ `;
+
+export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destination, offers, type, isDisabled, isSaving, isDeleting }, isNewEvent) => {
   const cityList = CITIES
     .slice()
     .map((el) => `<option value='${el}'></option>`)
     .join('');
 
-  const isSubmitDisabled = (dateFrom && dateTo && getDuration(dateFrom, dateTo) > 0) && basePrice;
+  const isSubmitDisabled = !((dateFrom && dateTo && getDuration(dateFrom, dateTo) > 0) && basePrice);
 
   return `
     <form class='event event--edit' action='#' method='post'>
@@ -129,14 +147,19 @@ export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destinati
         <div class='event__field-group event__field-group--price'>
           <label class='event__label' for='event-price-1'><span class='visually-hidden'>Price</span>€</label>
           <input
-            class='event__input event__input--price' id='event-price-1' type='text' name='event-price'
+            class='event__input event__input--price'
+            id='event-price-1'
+            type='text'
+            name='event-price'
             value='${basePrice}'
           >
         </div>
 
-        <button class='event__save-btn btn btn--blue' type='submit' ${isSubmitDisabled ? '' : 'disabled'}>Save</button>
-        <button class='event__reset-btn' type='reset'>${isNewEvent ? 'Cancel' : 'Delete'}</button>
-        ${!isNewEvent ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
+        <button class='event__save-btn btn btn--blue' type='submit' ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>
+          ${isSaving ? 'Saving...' : 'Save'}
+        </button>
+        ${createButtonReset(isNewEvent, isDisabled, isDeleting)}
+        ${!isNewEvent ? createButtonRollup() : ''}
       </header>
       <section class='event__details'>
         ${createOfferListTemplate(type, offers)}

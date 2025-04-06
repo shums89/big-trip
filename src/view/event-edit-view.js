@@ -190,11 +190,18 @@ export default class EventEditView extends AbstractStatefulView {
   static convertEventToState(event) {
     return {
       ...event,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
   static convertStateToEvent(state) {
     const event = { ...state };
+
+    delete event.isDisabled;
+    delete event.isSaving;
+    delete event.isDeleting;
 
     return event;
   }
