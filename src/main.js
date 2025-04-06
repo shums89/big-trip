@@ -6,16 +6,23 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import EventApiService from './events-api-service.js';
 import NewEventButtonView from './view/new-event-button-view.js';
+import { generateRandomString } from './utils/common.js';
 
-const AUTHORIZATION = 'Basic tg6wg9hk5898svbr';
 const END_POINT = 'https://17.ecmascript.htmlacademy.pro/big-trip';
+
+let keyAuthorization = sessionStorage.getItem('authorization');
+
+if (!keyAuthorization) {
+  keyAuthorization = `Basic ${generateRandomString(16)}`;
+  sessionStorage.setItem('authorization', keyAuthorization);
+}
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteTripContainer = siteHeaderElement.querySelector('.trip-main');
 const siteFiltersContainer = siteHeaderElement.querySelector('.trip-controls__filters');
 const siteEventsContainer = document.querySelector('.trip-events');
 
-const eventsApiService = new EventApiService(END_POINT, AUTHORIZATION);
+const eventsApiService = new EventApiService(END_POINT, keyAuthorization);
 const eventsModel = new EventsModel({ eventsApiService });
 const filterModel = new FilterModel();
 
