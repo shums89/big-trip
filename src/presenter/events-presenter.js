@@ -8,6 +8,12 @@ import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 import { filter } from '../utils/filter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class EventsPresenter {
   #eventsContainer = null;
@@ -24,6 +30,10 @@ export default class EventsPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor({ eventsContainer, eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsContainer = eventsContainer;
@@ -73,6 +83,7 @@ export default class EventsPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
@@ -103,6 +114,8 @@ export default class EventsPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
