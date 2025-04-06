@@ -98,6 +98,12 @@ export default class EventsModel extends Observable {
       isFavorite: event['is_favorite'],
     };
 
+    // Ненужные ключи мы удаляем
+    delete adaptedEvent['base_price'];
+    delete adaptedEvent['date_from'];
+    delete adaptedEvent['date_to'];
+    delete adaptedEvent['is_favorite'];
+
     return adaptedEvent;
   }
 }
