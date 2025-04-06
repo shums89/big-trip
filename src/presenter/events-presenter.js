@@ -1,5 +1,5 @@
 import EventsView from '../view/events-view.js';
-import { remove, render } from '../framework/render.js';
+import { remove, render, RenderPosition } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import NoEventView from '../view/no-event-view.js';
 import SortView from '../view/sort-view.js';
@@ -7,6 +7,7 @@ import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 import { filter } from '../utils/filter.js';
 import NewEventPresenter from './new-event-presenter.js';
+import LoadingView from '../view/loading-view.js';
 
 export default class EventsPresenter {
   #eventsContainer = null;
@@ -16,11 +17,13 @@ export default class EventsPresenter {
   #sortComponent = null;
   #eventsComponent = new EventsView();
   #noEventComponent = null;
+  #loadingComponent = new LoadingView();
 
   #eventPresenters = new Map();
   #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor({ eventsContainer, eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsContainer = eventsContainer;
@@ -101,6 +104,11 @@ export default class EventsPresenter {
         this.#clearEvents({ resetSortType: true });
         this.#renderEvents();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderEvents();
+        break;
     }
   };
 
@@ -133,6 +141,10 @@ export default class EventsPresenter {
     this.#eventPresenters.set(event.id, eventPresenter);
   };
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventsComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoEvents = () => {
     this.#noEventComponent = new NoEventView({
       filterType: this.#filterType,
@@ -147,6 +159,7 @@ export default class EventsPresenter {
     this.#eventPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noEventComponent) {
       remove(this.#noEventComponent);
@@ -159,6 +172,11 @@ export default class EventsPresenter {
 
   #renderEvents = () => {
     render(this.#eventsComponent, this.#eventsContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     if (this.events.length === 0) {
       this.#renderNoEvents();

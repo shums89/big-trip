@@ -4,14 +4,19 @@ import FilterModel from './model/filter-model.js';
 import EventsPresenter from './presenter/events-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
+import EventApiService from './tasks-api-service.js';
 import NewEventButtonView from './view/new-event-button-view.js';
+
+const AUTHORIZATION = 'Basic tg6wg9hk5898svbr';
+const END_POINT = 'https://17.ecmascript.htmlacademy.pro/big-trip';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteTripContainer = siteHeaderElement.querySelector('.trip-main');
 const siteFiltersContainer = siteHeaderElement.querySelector('.trip-controls__filters');
 const siteEventsContainer = document.querySelector('.trip-events');
 
-const eventsModel = new EventsModel();
+const eventsApiService = new EventApiService(END_POINT, AUTHORIZATION);
+const eventsModel = new EventsModel({ eventsApiService });
 const filterModel = new FilterModel();
 
 const tripPresenter = new TripPresenter({
@@ -45,8 +50,10 @@ function handleNewEventButtonClick() {
   newEventButtonComponent.element.disabled = true;
 }
 
-render(newEventButtonComponent, siteTripContainer);
-
 tripPresenter.init();
 filterPresenter.init();
 eventsPresenter.init();
+eventsModel.init()
+  .finally(() => {
+    render(newEventButtonComponent, siteTripContainer);
+  });

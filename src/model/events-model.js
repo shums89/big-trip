@@ -1,11 +1,34 @@
+import { UpdateType } from '../const.js';
 import Observable from '../framework/observable.js';
-import { generateEvents } from '../mock/event.js';
+// import { generateEvents } from '../mock/event.js';
 
 export default class EventsModel extends Observable {
-  #events = generateEvents();
+  // #events = generateEvents();
+  #events = [];
+  #eventsApiService = null;
+
+  constructor({ eventsApiService }) {
+    super();
+    this.#eventsApiService = eventsApiService;
+
+    this.#eventsApiService.events.then((events) => {
+      console.log(events.map(this.#adaptToClient));
+    });
+  }
 
   get events() {
     return this.#events;
+  }
+
+  async init() {
+    try {
+      const events = await this.#eventsApiService.events;
+      this.#events = events.map(this.#adaptToClient);
+    } catch (err) {
+      this.#events = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updateEvent(updateType, update) {
@@ -46,5 +69,17 @@ export default class EventsModel extends Observable {
     ];
 
     this._notify(updateType);
+  }
+
+  #adaptToClient(event) {
+    const adaptedEvent = {
+      ...event,
+      basePrice: event['base_price'],
+      dateFrom: new Date(event['date_from']),
+      dateTo: new Date(event['date_to']),
+      isFavorite: event['is_favorite'],
+    };
+
+    return adaptedEvent;
   }
 }
