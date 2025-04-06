@@ -4,7 +4,7 @@ import FilterModel from './model/filter-model.js';
 import EventsPresenter from './presenter/events-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import EventApiService from './tasks-api-service.js';
+import EventApiService from './events-api-service.js';
 import NewEventButtonView from './view/new-event-button-view.js';
 
 const AUTHORIZATION = 'Basic tg6wg9hk5898svbr';

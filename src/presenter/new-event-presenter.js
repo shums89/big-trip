@@ -49,7 +49,8 @@ export default class NewEventPresenter {
     this.#handleDataChange(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      { id: nanoid(), ...event },
+      event,
+      // { id: nanoid(), ...event },
     );
 
     this.destroy();
