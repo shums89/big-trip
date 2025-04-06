@@ -78,8 +78,8 @@ const createDestinationTemplate = (destination) => {
   `;
 };
 
-const createButtonReset = (isNewEvent, isDisabled, isDeleting) => {
-  if (isNewEvent) {
+const createButtonReset = (isDisabled, isAdding, isDeleting) => {
+  if (isAdding) {
     return `<button class='event__reset-btn' type='reset' ${isDisabled ? 'disabled' : ''}>Cancel</button>`;
   } else {
     return `
@@ -96,7 +96,20 @@ const createButtonRollup = (isDisabled) => `
     </button>
  `;
 
-export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destination, offers, type, isDisabled, isSaving, isDeleting }, isNewEvent) => {
+export const createEventEditTemplate = (event) => {
+  const {
+    basePrice,
+    dateFrom,
+    dateTo,
+    destination,
+    offers,
+    type,
+    isDisabled,
+    isAdding,
+    isSaving,
+    isDeleting,
+  } = event;
+
   const cityList = CITIES
     .slice()
     .map((el) => `<option value='${el}'></option>`)
@@ -158,8 +171,8 @@ export const createEventEditTemplate = ({ basePrice, dateFrom, dateTo, destinati
         <button class='event__save-btn btn btn--blue' type='submit' ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>
           ${isSaving ? 'Saving...' : 'Save'}
         </button>
-        ${createButtonReset(isNewEvent, isDisabled, isDeleting)}
-        ${!isNewEvent ? createButtonRollup() : ''}
+        ${createButtonReset(isDisabled, isAdding, isDeleting)}
+        ${!isAdding ? createButtonRollup() : ''}
       </header>
       <section class='event__details'>
         ${createOfferListTemplate(type, offers)}

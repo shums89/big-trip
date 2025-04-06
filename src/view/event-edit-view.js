@@ -1,7 +1,6 @@
 import { CITIES } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { generateDestination } from '../mock/event.js';
-import { checkEquality } from '../utils/event.js';
 import { createEventEditTemplate } from './event-edit-template.js';
 import flatpickr from 'flatpickr';
 
@@ -12,8 +11,10 @@ const BLANK_EVENT = {
   dateFrom: new Date(),
   dateTo: new Date(),
   destination: {},
+  isFavorite: false,
   offers: [],
   type: '',
+  isAdding: true,
 };
 
 export default class EventEditView extends AbstractStatefulView {
@@ -22,7 +23,6 @@ export default class EventEditView extends AbstractStatefulView {
   #handleDeleteClick = null;
   #datepickerFrom = null;
   #datepickerTo = null;
-  #isNewEvent = null;
 
   constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onDeleteClick }) {
     super();
@@ -30,13 +30,12 @@ export default class EventEditView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
     this.#handleDeleteClick = onDeleteClick;
-    this.#isNewEvent = checkEquality(event, BLANK_EVENT);
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEventEditTemplate(this._state, this.#isNewEvent);
+    return createEventEditTemplate(this._state);
   }
 
   // Перегружаем метод родителя removeElement,
@@ -113,7 +112,7 @@ export default class EventEditView extends AbstractStatefulView {
 
     if (
       target.value &&
-      target.value.toLowerCase() !== destination.name.toLowerCase() &&
+      target.value.toLowerCase() !== destination.name?.toLowerCase() &&
       CITIES.some((el) => el.toLowerCase() === target.value.toLowerCase())
     ) {
       const city = CITIES.filter((el) => el.toLowerCase() === target.value.toLowerCase())[0];
@@ -189,6 +188,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   static convertEventToState(event) {
     return {
+      isAdding: false,
       ...event,
       isDisabled: false,
       isSaving: false,
@@ -200,6 +200,7 @@ export default class EventEditView extends AbstractStatefulView {
     const event = { ...state };
 
     delete event.isDisabled;
+    delete event.isAdding;
     delete event.isSaving;
     delete event.isDeleting;
 
