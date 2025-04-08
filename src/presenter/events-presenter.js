@@ -18,9 +18,11 @@ const TimeLimit = {
 export default class EventsPresenter {
   #eventsContainer = null;
   #eventsModel = null;
+  #catalogModel = null;
   #filterModel = null;
 
   #sortComponent = null;
+  #newEventButtonComponent = null;
   #eventsComponent = new EventsView();
   #noEventComponent = null;
   #loadingComponent = new LoadingView();
@@ -35,10 +37,12 @@ export default class EventsPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor({ eventsContainer, eventsModel, filterModel, onNewEventDestroy }) {
+  constructor({ eventsContainer, eventsModel, catalogModel, filterModel, newEventButtonComponent, onNewEventDestroy }) {
     this.#eventsContainer = eventsContainer;
     this.#eventsModel = eventsModel;
+    this.#catalogModel = catalogModel;
     this.#filterModel = filterModel;
+    this.#newEventButtonComponent = newEventButtonComponent;
 
     this.#newEventPresenter = new NewEventPresenter({
       eventListContainer: this.#eventsComponent.element,
@@ -68,7 +72,7 @@ export default class EventsPresenter {
   }
 
   get Catalog() {
-    return this.#eventsModel.Catalog;
+    return this.#catalogModel.Catalog;
   }
 
   init() {
@@ -176,7 +180,7 @@ export default class EventsPresenter {
   };
 
   #renderLoading() {
-    render(this.#loadingComponent, this.#eventsComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#loadingComponent, this.#eventsContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderNoEvents = () => {
@@ -211,6 +215,8 @@ export default class EventsPresenter {
       this.#renderLoading();
       return;
     }
+
+    this.#newEventButtonComponent.element.disabled = false;
 
     if (this.events.length === 0) {
       this.#renderNoEvents();

@@ -4,9 +4,11 @@ import FilterModel from './model/filter-model.js';
 import EventsPresenter from './presenter/events-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import EventApiService from './events-api-service.js';
 import NewEventButtonView from './view/new-event-button-view.js';
 import { generateRandomString } from './utils/common.js';
+import EventsApiService from './api-services/events-api-service.js';
+import CatalogModel from './model/catalog-model.js';
+import CatalogApiService from './api-services/catalog-api-service.js';
 
 const END_POINT = 'https://17.ecmascript.htmlacademy.pro/big-trip';
 
@@ -22,13 +24,20 @@ const siteTripContainer = siteHeaderElement.querySelector('.trip-main');
 const siteFiltersContainer = siteHeaderElement.querySelector('.trip-controls__filters');
 const siteEventsContainer = document.querySelector('.trip-events');
 
-const eventsApiService = new EventApiService(END_POINT, keyAuthorization);
+const eventsApiService = new EventsApiService(END_POINT, keyAuthorization);
+const catalogApiService = new CatalogApiService(END_POINT, keyAuthorization);
+
 const eventsModel = new EventsModel({ eventsApiService });
+const catalogModel = new CatalogModel({ catalogApiService });
 const filterModel = new FilterModel();
 
 const tripPresenter = new TripPresenter({
   tripContainer: siteTripContainer,
   eventsModel,
+});
+
+const newEventButtonComponent = new NewEventButtonView({
+  onClick: handleNewEventButtonClick,
 });
 
 const filterPresenter = new FilterPresenter({
@@ -40,12 +49,10 @@ const filterPresenter = new FilterPresenter({
 const eventsPresenter = new EventsPresenter({
   eventsContainer: siteEventsContainer,
   eventsModel,
+  catalogModel,
   filterModel,
+  newEventButtonComponent,
   onNewEventDestroy: handleNewEventFormClose,
-});
-
-const newEventButtonComponent = new NewEventButtonView({
-  onClick: handleNewEventButtonClick,
 });
 
 function handleNewEventFormClose() {
@@ -60,7 +67,10 @@ function handleNewEventButtonClick() {
 tripPresenter.init();
 filterPresenter.init();
 eventsPresenter.init();
-eventsModel.init()
-  .finally(() => {
-    render(newEventButtonComponent, siteTripContainer);
+
+render(newEventButtonComponent, siteTripContainer);
+
+catalogModel.init()
+  .then(() => {
+    eventsModel.init();
   });
