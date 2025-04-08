@@ -8,6 +8,7 @@ export default class NewEventPresenter {
   #eventListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
+  #Catalog = null;
 
   #eventEditComponent = null;
 
@@ -17,12 +18,15 @@ export default class NewEventPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(Catalog) {
+    this.#Catalog = Catalog;
+
     if (this.#eventEditComponent !== null) {
       return;
     }
 
     this.#eventEditComponent = new EventEditView({
+      Catalog: this.#Catalog,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick
     });

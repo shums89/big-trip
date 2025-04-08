@@ -3,12 +3,14 @@ import { createEventTemplate } from './event-template.js';
 
 export default class EventView extends AbstractView {
   #event = null;
+  #Catalog = null;
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({ event, onEditClick, onFavoriteClick }) {
+  constructor({ event, Catalog, onEditClick, onFavoriteClick }) {
     super();
     this.#event = event;
+    this.#Catalog = Catalog;
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
 
@@ -17,7 +19,7 @@ export default class EventView extends AbstractView {
   }
 
   get template() {
-    return createEventTemplate(this.#event);
+    return createEventTemplate(this.#event, this.#Catalog);
   }
 
   #clickHandler = (evt) => {

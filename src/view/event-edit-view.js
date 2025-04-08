@@ -1,6 +1,4 @@
-import { CITIES } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { generateDestination } from '../mock/event.js';
 import { createEventEditTemplate } from './event-edit-template.js';
 import flatpickr from 'flatpickr';
 
@@ -18,15 +16,19 @@ const BLANK_EVENT = {
 };
 
 export default class EventEditView extends AbstractStatefulView {
+  #Catalog = null;
+
   #handleFormSubmit = null;
   #handleRollupClick = null;
   #handleDeleteClick = null;
+
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({ event = BLANK_EVENT, onFormSubmit, onRollupClick, onDeleteClick }) {
+  constructor({ event = BLANK_EVENT, Catalog, onFormSubmit, onRollupClick, onDeleteClick }) {
     super();
     this._setState(EventEditView.convertEventToState(event));
+    this.#Catalog = Catalog;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
     this.#handleDeleteClick = onDeleteClick;
@@ -35,7 +37,7 @@ export default class EventEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventEditTemplate(this._state);
+    return createEventEditTemplate(this._state, this.#Catalog);
   }
 
   // Перегружаем метод родителя removeElement,
@@ -108,17 +110,14 @@ export default class EventEditView extends AbstractStatefulView {
   };
 
   #destinationChangeHandler = ({ target }) => {
-    let destination = this._state.destination;
+    if (!target.value) {
+      return;
+    }
 
-    if (
-      target.value &&
-      target.value.toLowerCase() !== destination.name?.toLowerCase() &&
-      CITIES.some((el) => el.toLowerCase() === target.value.toLowerCase())
-    ) {
-      const city = CITIES.filter((el) => el.toLowerCase() === target.value.toLowerCase())[0];
+    const prevCity = this._state.destination?.name || '';
+    const destination = this.#Catalog.DESTINATIONS.filter((el) => el.name.toLowerCase() === target.value.toLowerCase())[0];
 
-      destination = generateDestination(city);
-
+    if (target.value.toLowerCase() !== prevCity.toLowerCase() && destination) {
       this.updateElement({
         destination,
       });
@@ -154,7 +153,7 @@ export default class EventEditView extends AbstractStatefulView {
     const optional = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
-      time_24hr: true,
+      'time_24hr': true,
       minuteIncrement: 1,
     };
 

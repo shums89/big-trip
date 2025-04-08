@@ -12,6 +12,7 @@ const Mode = {
 export default class EventPresenter {
   #eventsContainer = null;
   #event = null;
+  #Catalog = null;
   #handleDataChange = null;
   #handleModeChange = null;
 
@@ -25,20 +26,23 @@ export default class EventPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  init(event) {
+  init(event, Catalog) {
     this.#event = event;
+    this.#Catalog = Catalog;
 
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 
     this.#eventComponent = new EventView({
       event: this.#event,
+      Catalog: this.#Catalog,
       onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#eventEditComponent = new EventEditView({
       event: this.#event,
+      Catalog: this.#Catalog,
       onFormSubmit: this.#handleFormSubmit,
       onRollupClick: this.#handleRollupClick,
       onDeleteClick: this.#handleDeleteClick,
@@ -138,7 +142,8 @@ export default class EventPresenter {
     const isPatchUpdate =
       checkEquality(this.#event.offers, update.offers) ||
       this.#event.type !== update.type ||
-      this.#event.basePrice !== update.basePrice;
+      this.#event.basePrice !== update.basePrice ||
+      this.#event.destination.name !== update.destination.name;
 
     this.#handleDataChange(
       UserAction.UPDATE_EVENT,

@@ -1,16 +1,12 @@
-import { CITIES, EVENT_TYPES, OFFERS, OFFERS_BY_TYPE } from '../const.js';
 import { formatDate, getDuration, getFirstCapitalLetter } from '../utils/event.js';
 
-const createOfferListTemplate = (type, offers) => {
+const createOfferListTemplate = (type, offers, offersByType) => {
   if (!type) {
     return '';
   }
 
-  const offersByType = OFFERS_BY_TYPE.slice().filter((el) => el.type === type)[0].offers;
-
-  const offerList = OFFERS
+  const offerList = offersByType
     .slice()
-    .filter((el) => offersByType.some((it) => it === el.id))
     .map((offer) => {
       const typeFromId = offer.title.replace(/\s/g, '-').toLowerCase();
 
@@ -42,7 +38,7 @@ const createOfferListTemplate = (type, offers) => {
   `;
 };
 
-const createTypeListTemplate = () => EVENT_TYPES
+const createTypeListTemplate = (EVENT_TYPES) => EVENT_TYPES
   .slice()
   .map((el) =>
     `
@@ -96,7 +92,7 @@ const createButtonRollup = (isDisabled) => `
     </button>
  `;
 
-export const createEventEditTemplate = (event) => {
+export const createEventEditTemplate = (event, Catalog) => {
   const {
     basePrice,
     dateFrom,
@@ -109,6 +105,18 @@ export const createEventEditTemplate = (event) => {
     isSaving,
     isDeleting,
   } = event;
+
+  const EVENT_TYPES = Catalog.OFFERS
+    .reduce((acc, cur) => [...acc, cur.type], [])
+    .sort();
+
+  const offersByType = Catalog.OFFERS
+    .slice()
+    .filter((el) => el.type === type)[0]?.offers;
+
+  const CITIES = Catalog.DESTINATIONS
+    .reduce((acc, cur) => [...acc, cur.name], [])
+    .sort();
 
   const cityList = CITIES
     .slice()
@@ -129,7 +137,7 @@ export const createEventEditTemplate = (event) => {
           <div class='event__type-list'>
             <fieldset class='event__type-group'>
               <legend class='visually-hidden'>Event type</legend>
-              ${createTypeListTemplate()}
+              ${createTypeListTemplate(EVENT_TYPES)}
             </fieldset>
           </div>
         </div>
@@ -175,7 +183,7 @@ export const createEventEditTemplate = (event) => {
         ${!isAdding ? createButtonRollup() : ''}
       </header>
       <section class='event__details'>
-        ${createOfferListTemplate(type, offers)}
+        ${createOfferListTemplate(type, offers, offersByType)}
         ${createDestinationTemplate(destination)}
       </section>
     </form>

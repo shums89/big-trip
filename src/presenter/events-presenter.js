@@ -67,6 +67,10 @@ export default class EventsPresenter {
     return filteredEvents;
   }
 
+  get Catalog() {
+    return this.#eventsModel.Catalog;
+  }
+
   init() {
     this.#renderEvents();
   }
@@ -74,7 +78,7 @@ export default class EventsPresenter {
   createEvent() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newEventPresenter.init();
+    this.#newEventPresenter.init(this.Catalog);
   }
 
   #handleModeChange = () => {
@@ -122,7 +126,7 @@ export default class EventsPresenter {
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#eventPresenters.get(data.id).init(data);
+        this.#eventPresenters.get(data.id).init(data, this.Catalog);
         break;
       case UpdateType.MINOR:
         this.#clearEvents();
@@ -165,7 +169,9 @@ export default class EventsPresenter {
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
-    eventPresenter.init(event);
+
+    eventPresenter.init(event, this.Catalog);
+
     this.#eventPresenters.set(event.id, eventPresenter);
   };
 

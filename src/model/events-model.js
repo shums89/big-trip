@@ -5,19 +5,24 @@ import Observable from '../framework/observable.js';
 export default class EventsModel extends Observable {
   // #events = generateEvents();
   #events = [];
+  #Catalog = {};
   #eventsApiService = null;
 
   constructor({ eventsApiService }) {
     super();
     this.#eventsApiService = eventsApiService;
 
-    this.#eventsApiService.events.then((events) => {
-      console.log(events.map(this.#adaptToClient));
-    });
+    // this.#eventsApiService.events.then((events) => {
+    //   console.log(events.map(this.#adaptToClient));
+    // });
   }
 
   get events() {
     return this.#events;
+  }
+
+  get Catalog() {
+    return this.#Catalog;
   }
 
   async init() {
@@ -27,6 +32,22 @@ export default class EventsModel extends Observable {
       this.#events = events.map(this.#adaptToClient);
     } catch (err) {
       this.#events = [];
+    }
+
+    try {
+      const offers = await this.#eventsApiService.offers;
+
+      this.#Catalog = { ...this.#Catalog, OFFERS: offers };
+    } catch (err) {
+      this.#Catalog = { ...this.#Catalog, OFFERS: [] };
+    }
+
+    try {
+      const destinations = await this.#eventsApiService.destinations;
+
+      this.#Catalog = { ...this.#Catalog, DESTINATIONS: destinations };
+    } catch (err) {
+      this.#Catalog = { ...this.#Catalog, DESTINATIONS: [] };
     }
 
     this._notify(UpdateType.INIT);

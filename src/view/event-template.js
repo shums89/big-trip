@@ -1,4 +1,3 @@
-import { OFFERS } from '../const.js';
 import { getDurationFormat, formatDate } from '../utils/event.js';
 
 const createOfferListTemplate = (offers) => offers
@@ -14,12 +13,16 @@ const createOfferListTemplate = (offers) => offers
   )
   .join('');
 
-export const createEventTemplate = (event) => {
+export const createEventTemplate = (event, Catalog) => {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = event;
+
+  const offersByType = Catalog.OFFERS
+    .slice()
+    .filter((el) => el.type === type)[0].offers;
 
   const filteredOffers = offers
     .slice()
-    .map((id) => OFFERS.filter((el) => el.id === id)[0]);
+    .map((id) => offersByType.filter((el) => el.id === id)[0]);
 
   const totalPrice = filteredOffers.reduce((acc, cur) => acc + +cur.price, basePrice);
 
